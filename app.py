@@ -131,38 +131,43 @@ def generate_readme(project_name, code_files, pdf_files):
     """Generates README using OpenAI and extracts the AI-generated project title"""
     global completed_count
     print(f"🧠 [{completed_count + 1}] Generating README for {project_name}...")
-    code_snippets = []
-    for file in code_files:
-        with open(file, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read()
-        code_snippets.append(f"### {os.path.basename(file)}\n\n{content}...\n\n") 
     
-    prompt = f"""
-    Generate a README file for a project named '{project_name}'.
-    This project contains C/C++/Arduino/Proton Basic source code.
-    Provide a meaningful project title(within 50char) and a description about the project.
-    Do not include contribution, license information in the README.
-    if possible include pinmap in the README.
-    add a note that diagram may not be accurate (adjusted as needed).
-    list of pdf files: {','.join(pdf_files)}
-    Here are some code snippets:
-    {''.join(code_snippets)}
-    """
+    try:
+        code_snippets = []
+        for file in code_files:
+            with open(file, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+            code_snippets.append(f"### {os.path.basename(file)}\n\n{content}...\n\n") 
+        
+        prompt = f"""
+        Generate a README file for a project named '{project_name}'.
+        This project contains C/C++/Arduino/Proton Basic source code.
+        Provide a meaningful project title(within 50char) and a description about the project.
+        Do not include contribution, license information in the README.
+        if possible include pinmap in the README.
+        add a note that diagram may not be accurate (adjusted as needed).
+        list of pdf files: {','.join(pdf_files)}
+        Here are some code snippets:
+        {''.join(code_snippets)}
+        """
 
-    completion = client.chat.completions.create(
-        model=AI_MODEL,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    if completion is None or completion.choices is None or len(completion.choices) == 0:
-        print("❌ README generation failed. Retrying...")
-        return generate_readme(project_name, code_files, pdf_files)
-    readme_content = completion.choices[0].message.content
+        completion = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        if completion is None or completion.choices is None or len(completion.choices) == 0:
+            print("❌ README generation failed. Retrying...")
+            return generate_readme(project_name, code_files, pdf_files)
+        readme_content = completion.choices[0].message.content
 
-    # Extract AI-generated project title (first line of README)
-    first_line = readme_content.split("\n", 1)[0]
-    ai_project_name = first_line.strip("# ").strip()  # Remove Markdown heading
-    
-    return readme_content, ai_project_name
+        # Extract AI-generated project title (first line of README)
+        first_line = readme_content.split("\n", 1)[0]
+        ai_project_name = first_line.strip("# ").strip()  # Remove Markdown heading
+        
+        return readme_content, ai_project_name
+    except:
+        print(f"❌ Restarting...")
+        generate_readme(project_name, code_files, pdf_files)
 
 
 def sanitize_repo_name(repo_name):
@@ -227,7 +232,9 @@ def push_to_github(project_dir, ai_project_name):
         print(f"🚀 Successfully pushed {repo_name} to GitHub via HTTPS!")
     except subprocess.CalledProcessError:
         print(f"❌ Failed to push {repo_name} to GitHub. Check authentication or repo status.")
-
+        subprocess.run(["rm", "-rf", ".git"], check=True)
+        print("🔄 Retrying...")
+        push_to_github(project_dir, ai_project_name)
 
 def main():  
     find_project_and_push(BASE_PATH) 
