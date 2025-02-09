@@ -158,6 +158,7 @@ def generate_readme(project_name, code_files, pdf_files):
             print("❌ README generation failed. Retrying...")
             return generate_readme(project_name, code_files, pdf_files)
         readme_content = completion.choices[0].message.content
+        readme_content = readme_content.replace("```markdown\n", "")
 
         # Extract AI-generated project title (first line of README)
         first_line = readme_content.split("\n", 1)[0]
