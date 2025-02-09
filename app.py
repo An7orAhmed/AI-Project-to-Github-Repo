@@ -1,6 +1,5 @@
 import os
 import re
-import shutil
 import subprocess
 import requests
 from openai import OpenAI
@@ -163,6 +162,8 @@ def generate_readme(project_name, code_files, pdf_files):
         # Extract AI-generated project title (first line of README)
         first_line = readme_content.split("\n", 1)[0]
         ai_project_name = first_line.strip("# ").strip()  # Remove Markdown heading
+        if ai_project_name == "":
+            ai_project_name = project_name
         
         return readme_content, ai_project_name
     except:
@@ -199,12 +200,6 @@ def push_to_github(project_dir, ai_project_name):
     """Initializes Git repo, commits, and pushes to GitHub using AI-generated name via HTTPS."""
     os.chdir(project_dir)
 
-    # Delete existing .git folder if it exists
-    git_folder = os.path.join(project_dir, ".git")
-    if os.path.exists(git_folder):
-        shutil.rmtree(git_folder)
-        print("🗑️ Removed existing .git folder")
-
     # Initialize new Git repository
     subprocess.run(["git", "init"], check=True)
     subprocess.run(["git", "add", "."], check=True)
@@ -230,7 +225,7 @@ def push_to_github(project_dir, ai_project_name):
     try:
         subprocess.run(["git", "push", "-u", "origin", "main"], check=True)
         print(f"🚀 Successfully pushed {repo_name} to GitHub via HTTPS!")
-    except subprocess.CalledProcessError:
+    except:
         print(f"❌ Failed to push {repo_name} to GitHub. Check authentication or repo status.")
         subprocess.run(["rm", "-rf", ".git"], check=True)
         print("🔄 Retrying...")
