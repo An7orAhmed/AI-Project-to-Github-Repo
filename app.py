@@ -109,21 +109,25 @@ def find_project_and_push(base_path):
 
 
 def get_project_files(project_dir):
-    """Returns code and PDF files in a project directory (including subfolders)"""
+    """Returns code and PDF files, but keeps only .ino files if any exist"""
     code_files = []
     pdf_files = []
+    ino_files = []
     
     for root, _, files in os.walk(project_dir):
         for file in files:
             file_path = os.path.join(root, file)
-            if file.endswith(('.c', '.cpp', '.ino', '.bas', '.py')):
+            if file.endswith('.ino'):
+                ino_files.append(file_path)
+                print(f"📄 Found .ino file: {file_path}")
+            elif file.endswith(('.c', '.cpp', '.bas', '.py')):
                 code_files.append(file_path)
                 print(f"📄 Found code file: {file_path}")
             elif file.endswith('.pdf'):
                 pdf_files.append(file_path)
                 print(f"📘 Found PDF file: {file_path}")
     
-    return code_files, pdf_files
+    return (ino_files if ino_files else code_files), pdf_files
 
 
 def generate_readme(project_name, code_files, pdf_files):
