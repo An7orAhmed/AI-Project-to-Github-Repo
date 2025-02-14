@@ -164,6 +164,7 @@ def generate_readme(project_name, code_files, pdf_files):
             return generate_readme(project_name, code_files, pdf_files)
         readme_content = completion.choices[0].message.content
 
+        ai_project_name = ""
         startI = readme_content.find("# ")
         if startI != -1:
             readme_content = readme_content[startI:]
