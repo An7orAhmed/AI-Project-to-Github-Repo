@@ -149,6 +149,7 @@ def generate_readme(project_name, code_files, pdf_files):
         Do not include contribution, license information in the README.
         if possible include pinmap in the README.
         add a note that diagram may not be accurate (adjust as needed).
+        (Just reply with actual content without unnecessary query explaination)
         list of pdf files: {','.join(pdf_files)}
         Here are some code snippets:
         {''.join(code_snippets)}
