@@ -167,13 +167,15 @@ def generate_readme(project_name, code_files, pdf_files):
         startI = readme_content.find("# ")
         if startI != -1:
             readme_content = readme_content[startI:]
-        readme_content = readme_content.replace("```markdown\n", "")
+            readme_content = readme_content.replace("```markdown\n", "")
 
-        # Extract AI-generated project title (first line of README)
-        first_line = readme_content.split("\n", 1)[0]
-        ai_project_name = first_line.strip("# ").strip()  # Remove Markdown heading
-        if ai_project_name == "":
-            ai_project_name = project_name
+            # Extract AI-generated project title (first line of README)
+            first_line = readme_content.split("\n", 1)[0]
+            ai_project_name = first_line.strip("# ").strip()  # Remove Markdown heading
+            if ai_project_name == "" or ai_project_name.startswith("Okay"):
+                ai_project_name = re.sub(r'^\d+\.\s*', '', project_name) 
+        else:
+            readme_content = ""
         
         return readme_content, ai_project_name
     except:
