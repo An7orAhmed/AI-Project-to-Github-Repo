@@ -143,12 +143,12 @@ def generate_readme(project_name, code_files, pdf_files):
             code_snippets.append(f"### {os.path.basename(file)}\n\n{content}...\n\n") 
         
         prompt = f"""
-        Generate a README file for a project named '{project_name}'.
-        This project contains C/C++/Arduino/Proton Basic source code.
-        Provide a meaningful project title(within 50char) and a description about the project.
+        Generate a project documentation README file for a project named '{project_name}'.
+        This project may contains one or multiple C/C++/Arduino/Proton Basic source code.
+        Provide a meaningful project title(within 50char) and detailed description about the project.
         Do not include contribution, license information in the README.
         if possible include pinmap in the README.
-        add a note that diagram may not be accurate (adjusted as needed).
+        add a note that diagram may not be accurate (adjust as needed).
         list of pdf files: {','.join(pdf_files)}
         Here are some code snippets:
         {''.join(code_snippets)}
