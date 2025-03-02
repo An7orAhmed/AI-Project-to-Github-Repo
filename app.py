@@ -206,6 +206,8 @@ def create_github_repo(repo_name):
         print(f"✅ GitHub repository '{repo_name}' created successfully!")
     elif response.status_code == 422:
         print(f"⚠️ Repository '{repo_name}' already exists.")
+        repo_name += "-2"
+        create_github_repo(repo_name)
     else:
         print(f"❌ Failed to create repository: {response.json()}")
 
