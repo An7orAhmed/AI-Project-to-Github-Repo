@@ -204,11 +204,9 @@ def create_github_repo(repo_name):
 
     if response.status_code == 201:
         print(f"✅ GitHub repository '{repo_name}' created successfully!")
-    elif response.status_code == 422:
-        print(f"⚠️ Repository '{repo_name}' already exists.")
-        exit(0)
     else:
         print(f"❌ Failed to create repository: {response.json()}")
+        exit(0)
 
 def push_to_github(project_dir, ai_project_name):
     """Initializes Git repo, commits, and pushes to GitHub using AI-generated name via HTTPS."""
