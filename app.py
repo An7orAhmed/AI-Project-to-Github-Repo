@@ -180,8 +180,8 @@ def generate_readme(project_name, code_files, pdf_files):
         
         return readme_content, ai_project_name
     except:
-        print(f"❌ Restarting...")
-        generate_readme(project_name, code_files, pdf_files)
+        print("❌ README generation failed. Retrying...")
+        exit(0)
 
 
 def sanitize_repo_name(repo_name):
@@ -229,6 +229,7 @@ def push_to_github(project_dir, ai_project_name):
         subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
     except subprocess.CalledProcessError:
         print("❌ Remote origin already exists. Skipping remote addition.")
+        exit(0)
 
     # Ensure the branch is main
     subprocess.run(["git", "branch", "-M", "main"], check=True)
@@ -239,9 +240,7 @@ def push_to_github(project_dir, ai_project_name):
         print(f"🚀 Successfully pushed {repo_name} to GitHub via HTTPS!")
     except:
         print(f"❌ Failed to push {repo_name} to GitHub. Check authentication or repo status.")
-        subprocess.run(["rm", "-rf", ".git"], check=True)
-        print("🔄 Retrying...")
-        push_to_github(project_dir, ai_project_name)
+        exit(0)
 
 def main():  
     find_project_and_push(BASE_PATH) 
