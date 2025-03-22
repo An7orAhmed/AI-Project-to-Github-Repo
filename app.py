@@ -229,7 +229,7 @@ def push_to_github(project_dir, ai_project_name):
         subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
     except subprocess.CalledProcessError:
         print("❌ Remote origin already exists. Skipping remote addition.")
-        exit(0)
+        return
 
     # Ensure the branch is main
     subprocess.run(["git", "branch", "-M", "main"], check=True)
